@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  webserver:
+    build: ./bin/webserver
+    container_name: 'webserver'
+    ports:
+      - "888:80"
+    volumes: 
+      - ./www:/var/www/html
+      - ./config/vhosts:/etc/apache2/sites-enabled
+      
+  mysql:
+    build: ./bin/mysql
+    container_name: 'mysql'
+    environment:
+      MYSQL_ROOT_PASSWORD: pswd
+      MYSQL_DATABASE: test
+
+  elastic:
+    build: ./bin/elastic
+    container_name: 'elastic'
