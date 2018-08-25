@@ -4,9 +4,51 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e0eaec825878e2d25a68797e63026ed0",
-    "content-hash": "20e2a02608af21460810fe5f5882ef36",
+    "hash": "113995ebffe9db6331feed3b8686e1ff",
+    "content-hash": "1d0f90b0c3a2f4233f3c00dbc3a5c200",
     "packages": [
+        {
+            "name": "codeinc/strip-accents",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CodeIncHQ/StripAccents.git",
+                "reference": "e3dbadfd71c6bedf7646cb2cf66ce9e81fd6a482"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CodeIncHQ/StripAccents/zipball/e3dbadfd71c6bedf7646cb2cf66ce9e81fd6a482",
+                "reference": "e3dbadfd71c6bedf7646cb2cf66ce9e81fd6a482",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CodeInc\\StripAccents\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joan Fabrégat",
+                    "email": "joan@codeinc.fr",
+                    "homepage": "https://www.codeinc.fr",
+                    "role": "developer"
+                }
+            ],
+            "description": "Removes accents from strings",
+            "homepage": "https://github.com/CodeIncHQ/StripAccents",
+            "time": "2018-03-15 10:42:34"
+        },
         {
             "name": "elasticsearch/elasticsearch",
             "version": "v6.0.1",
@@ -368,7 +410,11 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^7.1",
+        "ext-iconv": "*",
         "ext-pdo": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "platform-overrides": {
+        "php": "7.1"
+    }
 }
