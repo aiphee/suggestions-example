@@ -26,7 +26,7 @@ class TermService
 	public function getTermCount(): int
 	{
 		$statement = $this->_db->query('SELECT COUNT(*) FROM terms');
-		
+
 		return (int)$statement->fetchColumn();
 	}
 
@@ -71,5 +71,52 @@ class TermService
 		]);
 
 		return $result;
+	}
+
+	/**
+	 * It may iterate over large portion of database and searches for closest match, should be slow for many results
+	 * @param string $q
+	 * @return array
+	 */
+	public function getLevenshteinResult(string $q): array
+	{
+		$highestMatchRow = false;
+		$lowestScore = 999;
+		$q = strtolower(StripAccents::strip($q));
+		$len = strlen($q);
+		$min_len = floor($len * .75);
+		$max_len = floor($len * 1.25);
+
+		$sql = <<<SQL
+SELECT * FROM terms 
+WHERE 
+	(LENGTH(term_standardized) BETWEEN :min_len AND :max_len);
+SQL;
+		$statement = $this->_db->prepare($sql);
+
+		$statement->execute([
+			'min_len' => $min_len,
+			'max_len' => $max_len
+		]);
+
+		while ($result = $statement->fetch(PDO::FETCH_ASSOC)) {
+			$score = levenshtein($result['term_standardized'], $q);
+			if ($score < $lowestScore) {
+				$lowestScore = $score;
+				$highestMatchRow = $result['term'];
+
+				/**
+				 * No need to check further
+				 */
+				if ($lowestScore === 1) {
+					break;
+				}
+			}
+		}
+
+		return [
+			'score' => $lowestScore,
+			'result' => $highestMatchRow
+		];
 	}
 }

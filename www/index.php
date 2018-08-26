@@ -1,18 +1,18 @@
-<?php 
+<?php
 require 'vendor/autoload.php';
 
-Flight::map('error', function(Throwable $e) {
+Flight::map('error', function (Throwable $e) {
 	echo '<h1>' . get_class($e) . '</h1>';
 	echo "<p>{$e->getMessage()}</p>";
 	echo "<pre>{$e->getTraceAsString()}</pre>";
 });
 
-Flight::register('db', 'PDO', array('mysql:host=mysql;dbname=test;charset=utf8','root','pswd'));
+Flight::register('db', 'PDO', ['mysql:host=mysql;dbname=test;charset=utf8', 'root', 'pswd', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]]);
 
 /**
  * Homepage
  */
-Flight::route('/', function(){
+Flight::route('/', function () {
 	$TermService = new TermService;
 
 	/**
@@ -20,12 +20,12 @@ Flight::route('/', function(){
 	 */
 	try {
 		$ElasticService = new ElasticService();
-		if(!$ElasticService->isConnectionOk()) {
+		if (!$ElasticService->isConnectionOk()) {
 			throw new RuntimeException('Elastic is connected but is NOT OK');
 		}
 
 		$termUploadLocation = Flight::request()->files->getData()['term_file']['tmp_name'] ?? false;
-		if($termUploadLocation) {
+		if ($termUploadLocation) {
 			$TermService->uploadTerms($termUploadLocation);
 		}
 	} catch (\Elastica\Exception\Connection\HttpException $e) {
@@ -35,7 +35,7 @@ Flight::route('/', function(){
 	/**
 	 * Check if any data present, if not upload some
 	 */
-	if($TermService->getTermCount() == 0) {
+	if ($TermService->getTermCount() == 0) {
 		Flight::render('elements/upload_new', [], 'content');
 	} else {
 		Flight::render('elements/hp', [], 'content');
@@ -48,7 +48,7 @@ Flight::route('/', function(){
 /**
  * Show results from elastic
  */
-Flight::route('/elasticSearch', function() {
+Flight::route('/elasticSearch', function () {
 	$ElasticService = new ElasticService();
 	$q = Flight::request()->query['q'] ?? null;
 	$q = htmlspecialchars($q, ENT_QUOTES); // CSRF
@@ -56,6 +56,22 @@ Flight::route('/elasticSearch', function() {
 	$result = $ElasticService->getResultForQuery($q);
 
 	Flight::render('elements/elasticResults', $result + ['q' => $q], 'content');
+
+	Flight::render('main');
+});
+
+
+/**
+ * Show results from elastic
+ */
+Flight::route('/levenshteinSearch', function () {
+	$Service = new TermService;
+	$q = Flight::request()->query['q'] ?? null;
+	$q = htmlspecialchars($q, ENT_QUOTES); // CSRF
+
+	$result = $Service->getLevenshteinResult($q);
+
+	Flight::render('elements/levenshteinResults', $result + ['q' => $q], 'content');
 
 	Flight::render('main');
 });
