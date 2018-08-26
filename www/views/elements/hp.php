@@ -20,7 +20,7 @@
     <div class="cell medium-6">
         <div class="callout secondary">
             <h2>Search with levenshtein</h2>
-            <p>Iterates throught whole database, slow for many results and wont show partial match.</p>
+            <p>Iterates through all similarly long words, slow for many results and wont show partial match.</p>
             <form action="/levenshteinSearch">
                 <div class="input-group">
                     <input class="input-group-field" name="q" minlength="3">
