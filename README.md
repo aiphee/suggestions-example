@@ -1,6 +1,11 @@
 This is just a simple demonstration of implementing "did you mean" with 
 Elastic and levenshtein.
 
+You can start it with:
+```bash
+docker-compose up -d
+```
+
 # Elastic
 
 Implemented through simple Query, there is probably a better way.
